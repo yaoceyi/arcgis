@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>画图</title>
+	<style type="text/css">
+	  html,
+      body,
+      #map {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+	</style>
+	<link rel="stylesheet" type="text/css" href="https://js.arcgis.com/4.15/esri/themes/light/main.css" />
+    <script type="text/javascript" src="https://js.arcgis.com/4.15/"></script>
+    <script type="text/javascript">
+    	require(["esri/Map", "esri/views/MapView","esri/views/draw/Draw","esri/Graphic","esri/layers/GraphicsLayer"],(Map,MapView,Draw,Graphic,GraphicsLayer)=>{
+    		var map=new Map({
+    			basemap:"streets"
+    		});
+    		var graphicsLayer = new GraphicsLayer();
+				map.add(graphicsLayer);
+    		var view=new MapView({
+    			map:map,
+    			center:[113,23],
+    			zoom:8,
+    			container:"map"
+    		});
+    		var draw= new Draw({
+    			view:view
+    		});
+    		var action = draw.create("polyline",{mode:"click"});
+    		action.on("vertex-add", function (evt) {
+			  measureLine(evt.vertices);
+			});
+
+			// fires when the pointer moves
+			action.on("cursor-update", function (evt) {
+			  measureLine(evt.vertices);
+			});
+
+			// fires when the drawing is completed
+			action.on("draw-complete", function (evt) {
+			  measureLine(evt.vertices);
+			});
+
+			// fires when a vertex is removed
+			action.on("vertex-remove", function (evt) {
+			  measureLine(evt.vertices);
+			});
+
+			function measureLine(vertices) {
+			  view.graphics.removeAll();
+
+			  var line = createLine(vertices);
+			  var lineLength = geometryEngine.geodesicLength(line, "miles");
+			  var graphic = createGraphic(line);
+			  view.graphics.add(graphic);
+			}
+    	});
+
+    </script>
+</head>
+<body>
+<div id="map"></div>
+</body>
+</html>

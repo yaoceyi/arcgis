@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <title>Intro to SceneView - Create a 3D map</title>
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+    </style>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css" />
+    <script src="https://js.arcgis.com/4.15/"></script>
+    <script>
+      require(["esri/Map", "esri/views/SceneView","esri/layers/TileLayer"], function(Map, SceneView,TileLayer) {
+        var transportationLayer = new TileLayer({
+        url: "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer",
+         id:"streets",
+         opacity:0.7
+        });
+
+        var housingLayer = new TileLayer({
+          url: "https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/New_York_Housing_Density/MapServer",
+          id:"hy-housing"
+         });
+        var map = new Map({
+          basemap: "streets",
+          ground: "world-elevation",
+          layers:[housingLayer]
+        });
+        map.layers.add(transportationLayer);
+        var view = new SceneView({
+          container: "viewDiv", // Reference to the scene div created in step 5
+          map: map, // Reference to the map object created before the scene
+          scale: 50000000, // Sets the initial scale to 1:50,000,000
+          center: [113.17, 21.78] // Sets the center point of view with lon/lat
+        });
+        var streetsLayerToggle = document.getElementById("streetsLayer");
+      streetsLayerToggle.addEventListener("change", function() {
+        transportationLayer.visible = streetsLayerToggle.checked;
+      });
+    view.on("layerview-create", function(event) {
+    if (event.layer.id === "ny-housing") {
+      console.log("LayerView for New York housing density created!", event.layerView);
+    }
+    if (event.layer.id === "streets") {
+      console.log("LayerView for streets created!", event.layerView);
+    }
+  });
+
+  });
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <span id="layerToggle" class="esri-widget"> <input type="checkbox" id="streetsLayer" checked /> Transportation </span>
+  </body>
+</html>

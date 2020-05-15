@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>point</title>
+	<style type="text/css">
+		html,body,#viewDiv{
+			padding: 0px;
+			margin: 0px;
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="https://js.arcgis.com/4.15/esri/themes/light/main.css">
+	<script type="text/javascript" src="https://js.arcgis.com/4.15/"></script>
+	<script type="text/javascript">
+		require(["esri/Map","esri/views/MapView","esri/layers/GraphicsLayer","esri/widgets/Sketch"],function(Map,MapView,GraphicsLayer,Sketch){
+			var map=new Map({
+				basemap:"topo-vector"
+			});
+			var graphicsLayer = new GraphicsLayer();
+			map.add(graphicsLayer);
+			var view = new MapView({
+				container:"viewDiv",
+				map:map,
+				center:[113,23],
+				zoom:15
+			});
+			var sketch = new Sketch({
+				view:view,
+				layer:graphicsLayer
+			});
+			view.ui.add(sketch,"top-right");
+		});
+	</script>
+</head>
+<body>
+	<div id="viewDiv"></div>
+</body>
+</html>

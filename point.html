@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>point</title>
+	<style type="text/css">
+		html,body,#viewDiv{
+			padding: 0px;
+			margin: 0px;
+			height: 100%;
+			width: 100%;
+		}
+	</style>
+	<link rel="stylesheet" type="text/css" href="https://js.arcgis.com/4.15/esri/themes/light/main.css">
+	<script type="text/javascript" src="https://js.arcgis.com/4.15/"></script>
+	<script type="text/javascript">
+		require(["esri/Map","esri/views/MapView","esri/Graphic","esri/layers/GraphicsLayer","esri/request"],function(Map,MapView,Graphic,GraphicsLayer,esriRequest){
+			var map=new Map({
+				basemap:"topo-vector"
+			});
+			var graphicsLayer = new GraphicsLayer();
+			map.add(graphicsLayer);
+			//object
+			var point={
+				type:"point",
+				longitude:113,
+				latitude:23
+			};
+			var simpleMarkerSymbol={
+				type:"simple-marker",
+				color:[226,119,40], //橘色
+				outline:{
+					color:[255,255,255], //白色
+					width:1
+				}
+			};
+			var pointGraphic =new Graphic({
+				geometry:point,
+				symbol:simpleMarkerSymbol
+			});
+			graphicsLayer.add(pointGraphic);
+			var view = new MapView({
+				container:"viewDiv",
+				map:map,
+				center:[113,23],
+				zoom:15
+			});
+		});
+	</script>
+</head>
+<body>
+	<div id="viewDiv"></div>
+</body>
+</html>

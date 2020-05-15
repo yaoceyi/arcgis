@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style>
+  
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+ 
+  </style>
+	<link rel="stylesheet" type="text/css" href="https://js.arcgis.com/4.15/esri/themes/light/main.css" />
+  <script type="text/javascript" src="https://js.arcgis.com/4.15/"></script>
+  <script type="text/javascript" src="./http.js"></script>
+  <script type="text/javascript">
+  	var url="http://api.map.baidu.com/reverse_geocoding/v3/";
+  	var method="GET";
+  	require(["esri/Map", "esri/views/MapView","esri/widgets/Search","esri/widgets/BasemapToggle","esri/Graphic","esri/layers/GraphicsLayer"],(Map,MapView,Search,BasemapToggle,Graphic,GraphicsLayer)=>{
+  		var map=new Map({
+  			 basemap: "satellite"
+  		});
+  		var graphicsLayer = new GraphicsLayer();
+			map.add(graphicsLayer);
+  		var view=new MapView({
+  		  container: "viewDiv", 
+          map: map, 
+          zoom: 4, 
+          center: [113, 23] 
+  		});
+  		view.on("click",(event)=>{
+  			console.log(event.mapPoint.latitude,event.mapPoint.longitude);
+  			view.popup.autoOpenEnabled = false;
+ 			// Get the coordinates of the click on the view
+			 var lat = Math.round(event.mapPoint.latitude * 1000) / 1000;
+			 var lon = Math.round(event.mapPoint.longitude * 1000) / 1000;
+
+			 var point={
+				type:"point",
+				longitude:event.mapPoint.longitude,
+				latitude:event.mapPoint.latitude
+			};
+			var simpleMarkerSymbol={
+				type:"simple-marker",
+				color:[226,119,40], //橘色
+				outline:{
+					color:[255,255,255], //白色
+					width:1
+				}
+			};
+			var pointGraphic =new Graphic({
+				geometry:point,
+				symbol:simpleMarkerSymbol
+			});
+			graphicsLayer.add(pointGraphic);
+
+			 view.popup.open({
+			   // Set the popup's title to the coordinates of the location
+			   title: "Reverse geocode: [" + lon + ", " + lat + "]",
+			   location: event.mapPoint,// Set the location of the popup to the clicked location
+			   content: "This is a point of interest"  // content displayed in the popup
+			 });
+  		});
+  		var searchWidget = new Search({ view: view });
+		var bmToggleWidget = new BasemapToggle({
+		  view: view,
+		  nextBasemap: "hybrid"
+		});
+
+		view.ui.add(searchWidget, "top-right");
+		view.ui.add(bmToggleWidget, "bottom-right");
+   	});
+  </script>
+</head>
+<body>
+<div id="viewDiv"></div>
+</body>
+</html>
